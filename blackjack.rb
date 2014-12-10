@@ -65,6 +65,20 @@ def get_valid_input (statement, valid_input)
 end
 
 
+def get_bet
+  bet = get_valid_input "Place bet, please (number):", /^([1-9][0-9]*)$/
+  puts "Your bet #{bet}"
+
+  return bet
+end
+
+
+def hit_again?
+  answer = get_valid_input "Hit or stay? (h/s):", /^h$|^s$/
+  answer == 'h' ? true : false
+end
+
+
 def show_stats user, cards
   puts
   puts "#{user}: #{cards}"
@@ -73,7 +87,11 @@ def show_stats user, cards
 end
 
 
-def show_table cards_dealer, cards_player
+def show_table cards_dealer, cards_player, bet_player
+  system 'clear'
+  puts "+++ Blackjack +++"
+  puts
+  puts "Your bet #{bet_player}"
   show_stats "Dealer", cards_dealer
   show_stats "You", cards_player
 end
@@ -84,31 +102,29 @@ cards_dealer = []
 
 cards = new_deck
 
+
+system 'clear'
+puts "Welcome to Blackjack (shoe game)"
+
 begin
 
-  bet = get_valid_input "Place bet, please (number):", /^([1-9][0-9]*)$/
-
-  puts "Your bet #{bet}"
+  bet_player = get_bet
 
   2.times { |card| cards_player.push get_card cards }
   2.times { |card| cards_dealer.push get_card cards }
+  
+  show_table cards_dealer, cards_player, bet_player
 
-  show_table cards_dealer, cards_player
-
-  answer = get_valid_input "Hit or stay? (hit/stay):", /^hit$|^stay$/
-
-  if 'hit' == answer
+  while hit_again?
     cards_player.push get_card cards
+    show_table cards_dealer, cards_player, bet_player
   end
-
-  show_table cards_dealer, cards_player
 
   value_player = get_card_value cards_player
   value_dealer = get_card_value cards_dealer
-
+  
 
   puts "Do you want to quit (yes/no)?"
   quit = gets.chomp.downcase
 
 end while quit != 'yes'
-
