@@ -16,10 +16,10 @@ def new_deck
     (2..10).each do |value|
       deck[card_type] << { value.to_s => value }
     end
-      deck[card_type] << { "jack"  => 10 }
-      deck[card_type] << { "queen" => 10 }
-      deck[card_type] << { "king"  => 10 }
-      deck[card_type] << { "ace"   => 11 }
+    deck[card_type] << { "jack"  => 10 }
+    deck[card_type] << { "queen" => 10 }
+    deck[card_type] << { "king"  => 10 }
+    deck[card_type] << { "ace"   => 11 }
   end
 
   return deck
@@ -27,10 +27,20 @@ end
 
 
 def get_card (cards) #{:hearts => [{"2" => 2}, {"3" => 3}, {"4" => 4}], :spades => [{"2" => 2}, {"3" => 3}]}
+
+  if cards.count == 0
+    puts "No more cards left!"
+    exit
+  end
+
   card_type = cards.keys.sample
   card_value = cards[card_type].sample
 
   cards[card_type].delete card_value
+
+  if cards[card_type].empty?
+    cards.delete card_type
+  end
 
   card = { card_type => card_value }
 
