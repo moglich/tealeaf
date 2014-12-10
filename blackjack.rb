@@ -26,7 +26,7 @@ def new_deck
 end
 
 
-def get_card (cards) #{:type => [{"2" => 2}, {"3" => 3}, {"4" => 4}], :type => [{"2" => 2}, {"3" => 3}, {"4" => 4}}
+def get_card (cards) #{:hearts => [{"2" => 2}, {"3" => 3}, {"4" => 4}], :spades => [{"2" => 2}, {"3" => 3}]}
   card_type = cards.keys.sample
   card_value = cards[card_type].sample
 
@@ -69,13 +69,40 @@ def get_bet
   bet = get_valid_input "Place bet, please (number):", /^([1-9][0-9]*)$/
   puts "Your bet #{bet}"
 
-  return bet
+  return bet.to_i
 end
 
 
 def hit_again?
   answer = get_valid_input "Hit or stay? (h/s):", /^h$|^s$/
   answer == 'h' ? true : false
+end
+
+
+def blackjack? cards
+  21 == (get_card_value cards) ? true : false
+end
+
+def get_winner cards_dealer, cards_player
+
+  value_player = get_card_value cards_player
+  value_dealer = get_card_value cards_dealer
+
+  if (value_player > 21) && (value_dealer > 21)
+    winner = "none"
+  elsif value_player > 21
+    winner = "Dealer"
+  elsif value_dealer > 21
+    winner = "Player"
+  elsif value_dealer == value_player
+    winner = "push"
+  elsif value_dealer < value_player
+    winner = "Player"
+  elsif value_dealer > value_player
+    winner = "Dealer"
+  end
+
+  return winner
 end
 
 
@@ -96,17 +123,15 @@ def show_table cards_dealer, cards_player, bet_player
   show_stats "You", cards_player
 end
 
-
-cards_player = []
-cards_dealer = []
-
 cards = new_deck
 
-
-system 'clear'
-puts "Welcome to Blackjack (shoe game)"
-
 begin
+
+  cards_player = []
+  cards_dealer = []
+
+  system 'clear'
+  puts "Welcome to Blackjack (shoe game)"
 
   bet_player = get_bet
 
@@ -115,16 +140,37 @@ begin
   
   show_table cards_dealer, cards_player, bet_player
 
+  if blackjack? cards_player
+    puts "Blackjack! You won!"
+  end
+
   while hit_again?
     cards_player.push get_card cards
     show_table cards_dealer, cards_player, bet_player
+
+    if (get_card_value cards_player) >= 21
+      break
+    end
   end
 
-  value_player = get_card_value cards_player
-  value_dealer = get_card_value cards_dealer
-  
+  while (get_card_value cards_dealer) <= 17
+    cards_dealer.push get_card cards
+    show_table cards_dealer, cards_player, bet_player
+  end
 
-  puts "Do you want to quit (yes/no)?"
-  quit = gets.chomp.downcase
+  winner = get_winner cards_dealer, cards_player
 
-end while quit != 'yes'
+  if winner == "Player"
+    puts "You won #{bet_player * 2} dollars!"
+  elsif winner == "none"
+    puts "no winner"
+  elsif winner == "push"
+    puts "It's a push"
+  else
+    puts "You lost #{bet_player} dollars!"
+  end
+
+  puts "Do you want to play again [Y/n]?"
+  play_again = gets.chomp.downcase
+
+end while play_again != 'n'
