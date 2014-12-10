@@ -13,15 +13,20 @@ def new_deck
 
 
   deck.each_key do |card_type|
-    (1..11).each do |value|
-      deck[card_type].push value
+    (2..10).each do |value|
+      deck[card_type] << { value.to_s => value }
     end
+      deck[card_type] << { "jack"  => 10 }
+      deck[card_type] << { "queen" => 10 }
+      deck[card_type] << { "king"  => 10 }
+      deck[card_type] << { "ace"   => 11 }
   end
+
   return deck
 end
 
 
-def get_card (cards) #{:type => [1, 2, 3, 4], :type => [1, 2, 3, 4]}
+def get_card (cards) #{:type => [{"2" => 2}, {"3" => 3}, {"4" => 4}], :type => [{"2" => 2}, {"3" => 3}, {"4" => 4}}
   card_type = cards.keys.sample
   card_value = cards[card_type].sample
 
@@ -31,12 +36,15 @@ def get_card (cards) #{:type => [1, 2, 3, 4], :type => [1, 2, 3, 4]}
 
   return card
 end
+# >> {"2" => 2}
 
 
-def get_card_value cards
+def get_card_value cards #[{:hearts=>{"queen"=>10}}, {:spades=>{"7"=>7}}]
   value = 0
-  cards.each do |card|
-    card.each_value { |val| value += val }
+  cards.each do |card_type|
+    card_type.each_value do |card|
+      card.each_value { |val| value += val }
+    end
   end
   return value
 end
