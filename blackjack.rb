@@ -33,13 +33,14 @@ def get_card (cards) #{:hearts => [{"2" => 2}, {"3" => 3}, {"4" => 4}], :spades 
     exit
   end
 
-  card_type = cards.keys.sample
-  card_value = cards[card_type].sample
+  deck = cards.index (cards.sample)
+  card_type = cards[deck].keys.sample
+  card_value = cards[deck][card_type].sample
 
-  cards[card_type].delete card_value
+  cards[deck][card_type].delete card_value
 
-  if cards[card_type].empty?
-    cards.delete card_type
+  if cards[deck][card_type].empty?
+    cards[deck].delete card_type
   end
 
   card = { card_type => card_value }
@@ -133,7 +134,8 @@ def show_table cards_dealer, cards_player, bet_player
   show_stats "You", cards_player
 end
 
-cards = new_deck
+cards = []
+4.times { cards.push new_deck }
 
 begin
 
@@ -151,15 +153,15 @@ begin
   show_table cards_dealer, cards_player, bet_player
 
   if blackjack? cards_player
-    puts "Blackjack! You won!"
-  end
+    puts "Blackjack!"
+  else
+    while hit_again?
+      cards_player.push get_card cards
+      show_table cards_dealer, cards_player, bet_player
 
-  while hit_again?
-    cards_player.push get_card cards
-    show_table cards_dealer, cards_player, bet_player
-
-    if (get_card_value cards_player) >= 21
-      break
+      if (get_card_value cards_player) >= 21
+        break
+      end
     end
   end
 
