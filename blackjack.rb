@@ -52,7 +52,7 @@ end
 
 def get_valid_input (statement, valid_input)
   loop do
-
+    puts
     puts statement
     input = gets.chomp
 
@@ -65,11 +65,19 @@ def get_valid_input (statement, valid_input)
 end
 
 
-def show_stats cards
-  puts "Cards: #{cards}"
+def show_stats user, cards
+  puts
+  puts "#{user}: #{cards}"
   value = get_card_value cards
   puts "Card value: #{value}"
 end
+
+
+def show_table cards_dealer, cards_player
+  show_stats "Dealer", cards_dealer
+  show_stats "You", cards_player
+end
+
 
 cards_player = []
 cards_dealer = []
@@ -83,8 +91,9 @@ begin
   puts "Your bet #{bet}"
 
   2.times { |card| cards_player.push get_card cards }
-  puts "You"
-  show_stats cards_player
+  2.times { |card| cards_dealer.push get_card cards }
+
+  show_table cards_dealer, cards_player
 
   answer = get_valid_input "Hit or stay? (hit/stay):", /^hit$|^stay$/
 
@@ -92,13 +101,7 @@ begin
     cards_player.push get_card cards
   end
 
-  puts "You"
-  show_stats cards_player
-
-  2.times { |card| cards_dealer.push get_card cards }
-
-  puts "Dealer"
-  show_stats cards_dealer
+  show_table cards_dealer, cards_player
 
   value_player = get_card_value cards_player
   value_dealer = get_card_value cards_dealer
