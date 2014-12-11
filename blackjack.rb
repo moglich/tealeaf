@@ -52,11 +52,24 @@ end
 
 def get_card_value cards #[{:hearts=>{"queen"=>10}}, {:spades=>{"7"=>7}}]
   value = 0
+  ace_cnt = 0
+
   cards.each do |card_type|
     card_type.each_value do |card|
-      card.each_value { |val| value += val }
+      card.each_value do |val|
+        if val == 11
+          ace_cnt += 1
+        end
+        value += val
+      end
     end
   end
+
+  while (value > 21) && (ace_cnt > 0)
+    value -= 10
+    ace_cnt -= 1
+  end
+  
   return value
 end
 
