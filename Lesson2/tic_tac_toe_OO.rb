@@ -44,15 +44,20 @@ class Player < Board
   end
 
   def pick_field
-    if self.player_type == "computer"
-      field = get_empty_positions.sample
+    unless get_empty_positions.empty?
+      if self.player_type == "computer"
+        field = get_empty_positions.sample
+      else
+        begin
+          puts "Pick field #{self.name}:"
+          field = gets.chomp.to_i
+        end until @@grid[field] == ' '
+      end
+      @@grid[field] = self.mark
     else
-      begin
-        puts "Pick field #{self.name}:"
-        field = gets.chomp.to_i
-      end until @@grid[field] == ' '
+      puts "It's a tie - no fields left!"
+      exit
     end
-    @@grid[field] = self.mark
   end
 end
 
