@@ -63,7 +63,10 @@ end
 class Game
   def initialize
     @board = Board.new
-    @player = Player.new("Player1", 'X', "user")
+    
+    puts "What is your name?"
+    username = gets.chomp
+    @player = Player.new(username, 'X', "user")
     @computer = Player.new("Robot", 'O', "computer")
   end
 
