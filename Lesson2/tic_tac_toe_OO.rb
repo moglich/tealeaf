@@ -82,8 +82,8 @@ class Game
     solution_combos = [[1,2,3], [4,5,6], [7,8,9], [1,4,7], [2,5,8], [3,6,9], [1,5,9], [3,5,7]]
 
     solution_combos.each do |combo|
-      return @player.name if @board.grid.values_at(*combo).count('X') == 3
-      return @computer.name if @board.grid.values_at(*combo).count('O') == 3
+      return @player.name if @board.grid.values_at(*combo).count(@player.mark) == 3
+      return @computer.name if @board.grid.values_at(*combo).count(@computer.mark) == 3
     end
     return nil
   end
