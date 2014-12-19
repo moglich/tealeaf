@@ -34,8 +34,7 @@ class Board
 end
 
 class Player < Board
-  attr_reader :name, :player_type
-  attr_accessor :mark
+  attr_reader :name, :mark, :player_type
 
   def initialize(name, mark, type = "computer")
     @name = name
