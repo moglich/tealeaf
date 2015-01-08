@@ -8,22 +8,26 @@
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/application.css">
   </head>
-  <body style="padding-top: 50px;">
+  <body style="padding-top: 150px;">
 
   <nav class="navbar navbar-default navbar-fixed-top">
-    <a class="navbar-brand" href="/">Blackjack</a>
     <div class="container">
-        <ul class="nav navbar-nav">
-          <li><a href="/new_game">New game</a></li>
-        </ul>
-<!--         <ul class="nav navbar-nav navbar-right">
-          <% if session[:username] %>
-            <li class="navbar-text"><%= session[:username] %></li>
-            <li><a href="/logout">logout</a></li>
-          <% else %>
-            <li><a href="/new_player">login</a></li>
-          <% end %>
-        </ul> -->
+    <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Blackjack</a>
+
+      </div>
+        <p class="navbar-text navbar-left">
+          <a href="/bet" class="navbar-link">New game</a>
+        </p>
+
+        <% if session[:username] %>
+          <p class="navbar-text navbar-right">
+            Signed in as <strong><%= session[:username] %></strong>. <a href="/logout">logout</a>
+          </p>
+        <% end %>
+      </div>
+
     </div>
   </nav>
 
@@ -36,6 +40,10 @@
     <% end %>
     <%if @player_lost %>
       <div class="alert alert-warning"><%= @player_lost %></div>
+    <% end %>
+
+    <% if session[:player_status] %>
+    <div class="alert alert-warning"><%= session[:player_status] %></div>
     <% end %>
 
     <%= yield %>
