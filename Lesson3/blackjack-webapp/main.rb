@@ -6,6 +6,8 @@ set :sessions, true
 
 ST_BUSTED = "Busted!"
 ST_BLACKJACK = "Blackjack!"
+LMT_DEALER_HIT = 17
+LMT_BLACKJACK = 21
 
 helpers do
 
@@ -60,7 +62,7 @@ helpers do
       end
     end
 
-    while (value > 21) && (ace_cnt > 0)
+    while (value > LMT_BLACKJACK) && (ace_cnt > 0)
       value -= 10
       ace_cnt -= 1
     end
@@ -69,11 +71,11 @@ helpers do
   end
 
   def busted?(cards)
-    get_total(cards) > 21 ? true : false
+    get_total(cards) > LMT_BLACKJACK ? true : false
   end
 
   def blackjack?(cards)
-    get_total(cards) == 21 ? true : false
+    get_total(cards) == LMT_BLACKJACK ? true : false
   end
 
   def get_winner(cards_dealer, cards_player)
@@ -81,11 +83,11 @@ helpers do
     value_player = get_total(cards_player)
     value_dealer = get_total(cards_dealer)
 
-    if (value_player > 21) && (value_dealer > 21)
+    if (value_player > LMT_BLACKJACK) && (value_dealer > LMT_BLACKJACK)
       winner = "none"
-    elsif value_player > 21
+    elsif value_player > LMT_BLACKJACK
       winner = "Dealer"
-    elsif value_dealer > 21
+    elsif value_dealer > LMT_BLACKJACK
       winner = "Player"
     elsif value_dealer == value_player
       winner = "push"
@@ -173,7 +175,7 @@ post '/game/player/hit' do
 end
 
 post '/game/player/stay' do
-  while session[:dealer_total] < 17
+  while session[:dealer_total] < LMT_DEALER_HIT
     session[:dealer_cards] << get_card([session[:deck]])
     session[:dealer_total] = get_total(session[:dealer_cards])
   end
