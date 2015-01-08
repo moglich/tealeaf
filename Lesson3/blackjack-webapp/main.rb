@@ -137,6 +137,10 @@ post '/bet' do
 end
 
 get '/new_game' do
+  if !session[:username]
+    redirect '/new_player'
+  end
+
   session[:deck] = new_deck
 
   session[:dealer_cards] = []
@@ -159,7 +163,6 @@ get '/new_game' do
 end
 
 get '/game' do
-
   if !session[:username]
     redirect '/new_player'
   end
