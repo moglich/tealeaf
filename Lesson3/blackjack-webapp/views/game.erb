@@ -4,15 +4,15 @@
     <div class="row">
       <% session[:dealer_cards].each do |card| %>
         <% card.each do |suit, card| %>
-          <%= "<div class=\"col-xs-#{10/session[:dealer_cards].size}\">" %>
-            <%= "<img src=\"./images/cards/#{suit.to_s}_#{card.first[0]}.jpg\" class=\"img-rounded card-border img-xs\">" %>
+          <div class="col-xs-2">
+            <img src=<%= "/images/cards/#{suit.to_s}_#{card.first[0]}.jpg" %> class="img-rounded card-border img-xs">
           </div>
         <% end %>
       <% end %>
     </div>
     <div class="row">
       <div class="col-xs-12">
-        Value <span class="badge"><%= session[:dealer_total] %></span>
+        Value <span class="badge"><%= get_total(session[:dealer_cards]) %></span>
       </div>
     </div>
   </div>
@@ -22,15 +22,15 @@
     <div class="row">
       <% session[:player_cards].each do |card| %>
         <% card.each do |suit, card| %>
-          <%= "<div class=\"col-xs-#{10/session[:player_cards].size}\">" %>
-            <%= "<img src=\"./images/cards/#{suit.to_s}_#{card.first[0]}.jpg\" class=\"img-rounded card-border img-xs\">" %>
+          <div class="col-xs-2">
+            <img src=<%= "/images/cards/#{suit.to_s}_#{card.first[0]}.jpg" %> class="img-rounded card-border img-xs">
           </div>
         <% end %>
       <% end %>
     </div>
     <div class="row">
       <div class="col-xs-12">
-        Value <span class="badge"><%= session[:player_total] %></span>
+        Value <span class="badge"><%= get_total(session[:player_cards]) %></span>
       </div>
     </div>
 

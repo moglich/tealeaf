@@ -147,7 +147,15 @@ get '/new_game' do
     session[:player_cards] << get_card([session[:deck]])
   end
 
-  redirect '/game'
+  if blackjack?(session[:player_cards])
+    if blackjack?(session[:dealer_cards])
+      session[:winner] = "push"
+    else
+      session[:winner] = "player"
+    end
+  end
+
+  erb :game
 end
 
 get '/game' do
@@ -156,28 +164,32 @@ get '/game' do
     redirect '/new_player'
   end
 
-  session[:player_total] = get_total(session[:player_cards])
-  session[:dealer_total] = get_total(session[:dealer_cards])
-
   erb :game
 end
 
 post '/game/player/hit' do
   session[:player_cards] << get_card([session[:deck]])
 
-  if (session[:player_cards].size == 2) && (blackjack?(session[:player_cards]))
-    session[:player_status] = ST_BLACKJACK
-  elsif busted?(session[:player_cards])
-    session[:player_status] = ST_BUSTED
+  if busted?(session[:player_cards])
+    @winner = "player"
+    @stop_game = true
   end
 
-  redirect '/game'
+  erb :game
+end
+
+get '/game/compare' do
+  if blackjack?(session[:player_cards])
+    @player_status = ST_BLACKJACK
+  elsif busted?(session[:player_cards])
+    @player_busted = ST_BUSTED
+  end
+  erb :game
 end
 
 post '/game/player/stay' do
   while session[:dealer_total] < LMT_DEALER_HIT
     session[:dealer_cards] << get_card([session[:deck]])
-    session[:dealer_total] = get_total(session[:dealer_cards])
   end
 
   if busted?(session[:dealer_cards])
