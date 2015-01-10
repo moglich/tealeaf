@@ -78,38 +78,73 @@ helpers do
     get_total(cards) == LMT_BLACKJACK ? true : false
   end
 
-  def get_winner(cards_dealer, cards_player)
+  def show_winner!(cards_dealer, cards_player)
 
     value_player = get_total(cards_player)
     value_dealer = get_total(cards_dealer)
 
     if (value_player > LMT_BLACKJACK) && (value_dealer > LMT_BLACKJACK)
-      winner = "none"
+      game_state!(:busted_both)
     elsif value_player > LMT_BLACKJACK
-      winner = "Dealer"
+      game_state!(:busted_player)
     elsif value_dealer > LMT_BLACKJACK
-      winner = "Player"
+      game_state!(:busted_dealer)
     elsif value_dealer == value_player
-      winner = "push"
+      game_state!(:push)
+    elsif value_player == LMT_BLACKJACK
+      game_state!(:winner_player)
     elsif value_dealer < value_player
-      winner = "Player"
+      game_state!(:winner_player)
     elsif value_dealer > value_player
-      winner = "Dealer"
+      game_state!(:winner_dealer)
     end
-
-    winner
   end
 
   def winner_msg!(state, msg="")
     case state
     when :push
       session[:winner_msg] = "<div class=\"alert alert-warning\">#{msg}</div>"
-    when :blackjack_player
+    when :winner_player
       session[:winner_msg] = "<div class=\"alert alert-success\">#{msg}</div>"
+
+    when :winner_dealer
+      session[:winner_msg] = "<div class=\"alert alert-danger\">#{msg}</div>"
+
     when :reset
       session[:winner_msg] = nil
     else
       session[:winner_msg] = "<div class=\"alert alert-info\">#{msg}</div>"
+    end
+  end
+
+  def game_state!(state)
+    case state
+    when :player_turn
+      session[:game_state] = :player_turn
+    when :busted_player
+      session[:game_state] = :busted_player
+      winner_msg!(:winner_dealer, "You are busted, #{session[:username]}!")
+    when :blackjack_player
+      winner_msg!(:blackjack_player, "You got a blackjack, #{session[:username]}!")
+      game_state!(:stop)
+    when :winner_player
+      winner_msg!(:winner_player, "You won, #{session[:username]}!")
+      game_state!(:stop)
+
+    when :dealer_turn
+      session[:game_state] = :dealer_turn
+    when :busted_dealer
+      session[:game_state] = :busted_dealer
+      winner_msg!(:winner_player, "Dealer is busted, you won!")
+    when :winner_dealer
+      winner_msg!(:winner_dealer, "Dealer won, you lost #{session[:username]}!")
+      game_state!(:stop)
+
+    when :push
+      winner_msg!(:push, "It's a push!")
+      game_state!(:stop)
+    when :stop
+      session[:game_state] = :stop
     end
   end
 end
@@ -155,6 +190,7 @@ get '/new_game' do
   end
 
   winner_msg!(:reset)
+  game_state!(:player_turn)
 
   session[:deck] = new_deck
 
@@ -168,9 +204,9 @@ get '/new_game' do
 
   if blackjack?(session[:player_cards])
     if blackjack?(session[:dealer_cards])
-      winner_msg!(:push, "It's a push")
+      game_state!(:push)
     else
-      winner_msg!(:blackjack_player, "You got a Blackjack, #{session[:username]}!")
+      game_state!(:blackjack_player)
     end
   end
 
@@ -189,30 +225,27 @@ post '/game/player/hit' do
   session[:player_cards] << get_card([session[:deck]])
 
   if busted?(session[:player_cards])
-    @winner = "player"
-    @stop_game = true
+    game_state!(:busted_player)
   end
 
-  erb :game
+  redirect '/game'
 end
 
 get '/game/compare' do
-  if blackjack?(session[:player_cards])
-    @player_status = ST_BLACKJACK
-  elsif busted?(session[:player_cards])
-    @player_busted = ST_BUSTED
-  end
-  erb :game
+  show_winner!(session[:dealer_cards], session[:player_cards])
+  redirect '/game'
 end
 
 post '/game/player/stay' do
-  while session[:dealer_total] < LMT_DEALER_HIT
+  game_state!(:dealer_turn)
+
+  while get_total(session[:dealer_cards]) < LMT_DEALER_HIT
     session[:dealer_cards] << get_card([session[:deck]])
   end
 
   if busted?(session[:dealer_cards])
-    session[:dealer_status] = ST_BUSTED
+    game_state!(:busted_dealer)
   end
 
-  redirect '/game'
+  redirect '/game/compare'
 end

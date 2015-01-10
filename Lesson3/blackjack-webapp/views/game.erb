@@ -34,18 +34,20 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-xs-2">
-        <form id="hit" action="/game/player/hit" method="POST">
-          <button class= "btn btn-success btn-large">Hit</button>
-        </form>
-      </div>
+    <% if session[:game_state] == :player_turn %>
+      <div class="row">
+        <div class="col-xs-2">
+          <form id="hit" action="/game/player/hit" method="POST">
+            <button class= "btn btn-success btn-large">Hit</button>
+          </form>
+        </div>
 
-      <div class="col-xs-2">
-        <form id="stay" action="/game/player/stay" method="POST">
-          <button class= "btn btn-warning btn-large">Stay</button>
-        </form>
+        <div class="col-xs-2">
+          <form id="stay" action="/game/player/stay" method="POST">
+            <button class= "btn btn-warning btn-large">Stay</button>
+          </form>
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
 </div>
