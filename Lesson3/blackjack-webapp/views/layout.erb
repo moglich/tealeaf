@@ -8,16 +8,16 @@
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/application.css">
   </head>
-  <body style="padding-top: 150px;">
+  <body style="padding-top: 80px;">
 
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
     <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
-        <a class="navbar-brand" href="/">Blackjack</a>
+        <a class="navbar-brand" href="/bet">Blackjack</a>
 
       </div>
-        <p class="navbar-text navbar-left">
+      <!--        <p class="navbar-text navbar-left">
           <a href="/bet" class="navbar-link">New game</a>
         </p>
 
@@ -26,7 +26,7 @@
             Signed in as <strong><%= session[:username] %></strong>. <a href="/logout">logout</a>
           </p>
         <% end %>
-      </div>
+      </div> -->
 
     </div>
   </nav>
@@ -42,8 +42,10 @@
       <div class="alert alert-warning"><%= @player_lost %></div>
     <% end %>
 
-    <% if session[:player_status] %>
-    <div class="alert alert-warning"><%= session[:player_status] %></div>
+    <% if session[:winner] == "player_blackjack" %>
+      <div class="alert alert-success">You got a Blackjack!</div>
+    <% elsif session[:winner] == "push" %>
+      <div class="alert alert-warning">It's a push!</div>
     <% end %>
 
     <%= yield %>

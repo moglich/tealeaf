@@ -155,11 +155,11 @@ get '/new_game' do
     if blackjack?(session[:dealer_cards])
       session[:winner] = "push"
     else
-      session[:winner] = "player"
+      session[:winner] = "player_blackjack"
     end
   end
 
-  erb :game
+  redirect '/game'
 end
 
 get '/game' do
