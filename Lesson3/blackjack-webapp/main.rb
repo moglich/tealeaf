@@ -99,6 +99,19 @@ helpers do
 
     winner
   end
+
+  def winner_msg!(state, msg="")
+    case state
+    when :push
+      session[:winner_msg] = "<div class=\"alert alert-warning\">#{msg}</div>"
+    when :blackjack_player
+      session[:winner_msg] = "<div class=\"alert alert-success\">#{msg}</div>"
+    when :reset
+      session[:winner_msg] = nil
+    else
+      session[:winner_msg] = "<div class=\"alert alert-info\">#{msg}</div>"
+    end
+  end
 end
 
 get '/' do
@@ -141,6 +154,8 @@ get '/new_game' do
     redirect '/new_player'
   end
 
+  winner_msg!(:reset)
+
   session[:deck] = new_deck
 
   session[:dealer_cards] = []
@@ -153,9 +168,9 @@ get '/new_game' do
 
   if blackjack?(session[:player_cards])
     if blackjack?(session[:dealer_cards])
-      session[:winner] = "push"
+      winner_msg!(:push, "It's a push")
     else
-      session[:winner] = "player_blackjack"
+      winner_msg!(:blackjack_player, "You got a Blackjack, #{session[:username]}!")
     end
   end
 

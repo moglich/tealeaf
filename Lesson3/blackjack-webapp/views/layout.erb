@@ -35,17 +35,9 @@
     <%if @error %>
       <div class="alert alert-danger"><%= @error %></div>
     <% end %>
-    <%if @player_won %>
-      <div class="alert alert-success"><%= @player_won %></div>
-    <% end %>
-    <%if @player_lost %>
-      <div class="alert alert-warning"><%= @player_lost %></div>
-    <% end %>
 
-    <% if session[:winner] == "player_blackjack" %>
-      <div class="alert alert-success">You got a Blackjack!</div>
-    <% elsif session[:winner] == "push" %>
-      <div class="alert alert-warning">It's a push!</div>
+    <% if session[:winner_msg] %>
+      <%= session[:winner_msg] %>
     <% end %>
 
     <%= yield %>
