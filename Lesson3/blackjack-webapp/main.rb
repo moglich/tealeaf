@@ -103,17 +103,21 @@ helpers do
   def winner_msg!(state, msg="")
     case state
     when :push
-      session[:winner_msg] = "<div class=\"alert alert-warning\">#{msg}</div>"
+      level = "warning"
+
     when :winner_player
-      session[:winner_msg] = "<div class=\"alert alert-success\">#{msg}</div>"
+      level = "success"
 
     when :winner_dealer
-      session[:winner_msg] = "<div class=\"alert alert-danger\">#{msg}</div>"
-
-    when :reset
-      session[:winner_msg] = nil
+      level = "danger"
     else
-      session[:winner_msg] = "<div class=\"alert alert-info\">#{msg}</div>"
+      level = "info"
+    end
+
+    if state != :reset
+      session[:winner_msg] = "<div class=\"alert alert-#{level}\">#{msg}</div>"
+    else
+      session[:winner_msg] = nil
     end
   end
 
@@ -125,7 +129,7 @@ helpers do
       session[:game_state] = :busted_player
       winner_msg!(:winner_dealer, "You are busted, #{session[:username]}!")
     when :blackjack_player
-      winner_msg!(:blackjack_player, "You got a blackjack, #{session[:username]}!")
+      winner_msg!(:winner_player, "You got a blackjack, #{session[:username]}!")
       game_state!(:stop)
     when :winner_player
       winner_msg!(:winner_player, "You won, #{session[:username]}!")
